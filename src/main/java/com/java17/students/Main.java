@@ -14,6 +14,16 @@ public class Main {
         studentDao.saveStudentIntoDatabase(st);
         System.out.println(studentDao.getAllStudentsFromDatabase());
 
+        Scanner scanner = new Scanner(System.in);
+        String tekst;
+        do{
+            if(tekst.equals("dodaj")){
+                Student student = new Student(scanner.next(), scanner.next(), scanner.);
+                studentDao.saveStudentIntoDatabase();
+            }else if(tekst.equals("listuj")){
+
+            }
+        }while (!tekst.equals("exit"));
         // jeśli wpiszę 'dodaj'
         // aplikacja ma poprosić nas o imie, nazwisko i indeks
         // następnie aplikacja ma dodać studenta o podanym imieniu, nazwisku i indeksie do bazy
