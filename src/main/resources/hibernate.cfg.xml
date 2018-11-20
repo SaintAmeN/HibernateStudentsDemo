@@ -15,6 +15,7 @@
         <property name="show_sql">true</property>
 
         <mapping class="com.java17.students.Student"/>
+        <mapping class="com.java17.students.Ocena"/>
 
     </session-factory>
 </hibernate-configuration>

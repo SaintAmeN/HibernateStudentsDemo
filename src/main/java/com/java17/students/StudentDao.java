@@ -12,7 +12,7 @@ import java.util.List;
 // data access object
 public class StudentDao {
 
-    public boolean saveStudentIntoDatabase(Student student) {
+    public boolean saveStudentWithGradesIntoDb(Student student) {
         // pobieramy session factory (fabryka połączenia z bazą)
         SessionFactory sesssionFactory = HibernateUtil.getSessionFactory();
         Transaction transaction = null;
@@ -21,7 +21,35 @@ public class StudentDao {
             // otwieram transakcję
             transaction = session.beginTransaction();
 
+            for (Ocena oc : student.getOceny()) {
+                session.save(oc);
+            }
+
             session.save(student); // dokonujemy zapisu na bazie
+
+            // zamykam transakcję i zatwierdzam zmiany
+            transaction.commit();
+        } catch (SessionException se) {
+            // w razie błędu przywróć stan sprzed transakcji
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            return false;
+        }
+        return true;
+    }
+
+
+    public boolean saveIntoDb(BaseEntity entity) {
+        // pobieramy session factory (fabryka połączenia z bazą)
+        SessionFactory sesssionFactory = HibernateUtil.getSessionFactory();
+        Transaction transaction = null;
+
+        try (Session session = sesssionFactory.openSession()) {
+            // otwieram transakcję
+            transaction = session.beginTransaction();
+
+            session.save(entity); // dokonujemy zapisu na bazie
 
             // zamykam transakcję i zatwierdzam zmiany
             transaction.commit();

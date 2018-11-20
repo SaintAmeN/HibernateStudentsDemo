@@ -3,13 +3,14 @@ package com.java17.students;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 
 @Entity // <- hibernate
 @Data // <-lombok
-@AllArgsConstructor
+@AllArgsConstructor()
 @NoArgsConstructor
-public class Student {
+public class Student extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     // identity - pobiera id, następnie przypisuje wartość do obiektu i zapisuje obiekt
@@ -24,4 +25,8 @@ public class Student {
 
     @Column(name = "indeksik", unique = true)
     private String indeks;
+
+    // one (this class object) to many (some class Objects below)
+    @OneToMany(mappedBy = "student", fetch = FetchType.EAGER)
+    private List<Ocena> oceny;
 }
