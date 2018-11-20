@@ -5,8 +5,8 @@ import lombok.*;
 import javax.persistence.*;
 
 
-@Entity
-@Data
+@Entity // <- hibernate
+@Data // <-lombok
 @AllArgsConstructor
 @NoArgsConstructor
 public class Student {
@@ -22,6 +22,6 @@ public class Student {
     @Column(name = "surname")
     private String nazwisko;
 
-    @Column(name = "indeksik")
+    @Column(name = "indeksik", unique = true)
     private String indeks;
 }
