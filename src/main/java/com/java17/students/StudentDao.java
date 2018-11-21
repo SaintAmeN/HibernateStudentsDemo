@@ -74,6 +74,8 @@ public class StudentDao {
             // wywołaj zapytanie
             List<Student> students = query.list();
 
+//            System.out.println(students);
+
             // zwróć wynik
             return students;
         } catch (SessionException se) {

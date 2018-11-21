@@ -42,7 +42,7 @@ public class Main {
 
                 student.setImie(imie);
                 student.setNazwisko(nazwisko);
-                student.setIndeks(indeks);
+//                student.setIndeks(indeks);
                 student.setOceny(ocenaList);
 
                 studentDao.saveStudentWithGradesIntoDb(student);
@@ -55,7 +55,7 @@ public class Main {
 
         // jeśli wpiszę 'dodaj'
         // aplikacja ma poprosić nas o imie, nazwisko i indeks
-        // następnie aplikacja ma dodać studenta o podanym imieniu, nazwisku i indeksie do bazy
+        // następnie aplikacja ma dod   ać studenta o podanym imieniu, nazwisku i indeksie do bazy
 
         // jeśli wpiszę 'listuj'
         // aplikacja ma wypisać wszystki studentów linia pod linią
