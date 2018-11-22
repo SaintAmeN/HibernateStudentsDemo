@@ -10,6 +10,7 @@ import javax.persistence.PersistenceException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 // data access object
 public class StudentDao {
@@ -159,12 +160,40 @@ public class StudentDao {
     }
 
     public boolean addTeacherToStudent(Long teacherId, Long studentId) {
-        // 1 pobierz teachera o podanym id
-        // 2 pobierz studenta o podanym id
-        // 3 do listy nauczycieli w studencie dodać teachera
-        // 4 do listy studentów w teacherze dodać studenta
-        // zapisać obie encje (student i teacher)
-        // UWAGA! PAMIĘTAJ BY ZAPISAĆ STUDENTA I TEACHERA W JEDNEJ SESJI/TRANZAKCJI
+        SessionFactory sesssionFactory = HibernateUtil.getSessionFactory();
+        Transaction transaction = null;
+        try (Session session = sesssionFactory.openSession()) {
+                        // 1 pobierz teachera o podanym id
+            Query<Teacher> query = session.createQuery("from Teacher where id = :zmiennaX", Teacher.class);
+            query.setParameter("zmiennaX", teacherId);
+            Teacher teacher = query.getSingleResult();
+
+            // 2 pobierz studenta o podanym id
+            Query<Student> queryStudent = session.createQuery("from Student where id = :zmiennaY", Student.class);
+            queryStudent.setParameter("zmiennaY", studentId);
+            Student student = queryStudent.getSingleResult();
+
+            // 3 do listy nauczycieli w studencie dodać teachera
+            student.getTeachers().add(teacher);
+            // 4 do listy studentów w teacherze dodać studenta
+            teacher.getStudents().add(student);
+
+            transaction = session.beginTransaction();
+            // zapisać obie encje (student i teacher)
+            session.save(teacher);
+            session.save(student);
+
+            // UWAGA! PAMIĘTAJ BY ZAPISAĆ STUDENTA I TEACHERA W JEDNEJ SESJI/TRANZAKCJI!
+            transaction.commit();
+            return true;
+        } catch (PersistenceException se) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            System.err.println("Nie udało się wykonać zadania!");
+        } // UWAGA: https://docs.oracle.com/javaee/6/api/javax/persistence/Query.html#getSingleResult()
+
+        return false;
     }
 
     public List<Student> getAllStudents_fromTeacher(Long teacherId) {
@@ -177,7 +206,7 @@ public class StudentDao {
             Teacher teacher = query.getSingleResult();
 
             // UWAGA! pobieram studentów przed zakończeniem sesji (sesja kończy się wraz z blokiem try)
-            return teacher.getStudents();
+            return teacher.getStudents().stream().collect(Collectors.toList());
         } catch (PersistenceException se) {
             System.err.println("Nie udało się pobrać z bazy!");
         } // UWAGA: https://docs.oracle.com/javaee/6/api/javax/persistence/Query.html#getSingleResult()

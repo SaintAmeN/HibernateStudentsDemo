@@ -12,6 +12,7 @@ import java.util.List;
 @Data // <-lombok
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString(exclude = {"teachers"})
 public class Student extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
