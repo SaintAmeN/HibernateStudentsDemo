@@ -1,0 +1,11 @@
+student dodaj 1 2 4 1 WF 5
+student dodaj 1 2 4 2 WF 5 MATEMATYKA 3
+student dodaj 1 2 5 1 J_ANG 5 J_POLSKI 3
+teacher dodaj a b
+teacher dodaj c d
+teacher dodaj ce df
+teacher get_students 6
+teacher powiaz 1 6
+teacher powiaz 2 6
+teacher powiaz 3 6
+teacher get_students 6
