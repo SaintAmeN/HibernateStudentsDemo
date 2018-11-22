@@ -6,8 +6,10 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
+import javax.persistence.PersistenceException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 // data access object
 public class StudentDao {
@@ -86,5 +88,73 @@ public class StudentDao {
 
         // jeśli nie uda się znaleźć zwracamy pustą listę.
         return new ArrayList<>();
+    }
+
+
+    public Optional<Student> getById(Long id) {
+        SessionFactory sesssionFactory = HibernateUtil.getSessionFactory();
+        try (Session session = sesssionFactory.openSession()) {
+
+            Query<Student> query = session.createQuery("from Student where id = :id", Student.class);
+            query.setParameter("id", id);
+
+            return Optional.ofNullable(query.getSingleResult());
+        } catch (PersistenceException se) {
+            System.err.println("Nie udało się pobrać z bazy!");
+        } // UWAGA: https://docs.oracle.com/javaee/6/api/javax/persistence/Query.html#getSingleResult()
+
+
+        return Optional.empty();
+    }
+
+    public List<Student> getById(List<Long> ids) {
+        SessionFactory sesssionFactory = HibernateUtil.getSessionFactory();
+        try (Session session = sesssionFactory.openSession()) {
+
+            Query<Student> query = session.createQuery("from Student where id IN :ids", Student.class);
+            query.setParameterList("ids", ids);
+
+            return query.list();
+        } catch (PersistenceException se) {
+            System.err.println("Nie udało się pobrać z bazy!");
+        } // UWAGA: https://docs.oracle.com/javaee/6/api/javax/persistence/Query.html#getSingleResult()
+
+        return new ArrayList<>();
+    }
+
+    // 1. stwórz metodę 'removeById' która jako parametr przyjmuje Long 'id' studenta i zwraca boolean (wynik powodzenia operacji)
+    // 2. w metodzie zaimplementuj usuwanie z session, posłuż się metodą ('delete')
+    //      UWAGA!!! zwróć uwagę że delete przyjmuje jako parametr Object!
+    //      - oznacza to, że najpierw musimy znaleźć ten obiekt ( pobrać go z bazy) a dopiero potem przekazać do usunięcia.
+    // 3. zwróć wynik
+    // 4. przetestuj działanie aplikacji.
+
+    public boolean removeById(Long id) {
+        SessionFactory sesssionFactory = HibernateUtil.getSessionFactory();
+        Transaction transaction = null;
+
+        Optional<Student> studentOptional = getById(id);
+        if (studentOptional.isPresent()) {
+            Student student = studentOptional.get();
+            try (Session session = sesssionFactory.openSession()) {
+                transaction = session.beginTransaction();
+
+                for (Ocena ocena : student.getOceny()) {
+                    // czyścimy relację zanim usuniemy studenta.
+                    session.delete(ocena);
+                }
+
+                session.delete(student);
+                // logika usuwania
+
+                transaction.commit();
+                return true;
+            } catch (SessionException se) {
+                if (transaction != null) {
+                    transaction.rollback();
+                }
+            }
+        }
+        return false;
     }
 }

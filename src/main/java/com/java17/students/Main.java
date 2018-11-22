@@ -2,6 +2,7 @@ package com.java17.students;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 
 
@@ -48,20 +49,37 @@ public class Main {
                 studentDao.saveStudentWithGradesIntoDb(student);
             } else if (tekst.equals("listuj")) {
                 System.out.println(studentDao.getAllStudentsFromDatabase());
+            } else if (tekst.equals("pobierz")) {
+                System.out.println("Podaj identyfikator studenta:");
+
+                Long idStudenta = scanner.nextLong();
+
+//                studentDao.getById(idStudenta).ifPresent(System.out::println);
+                Optional<Student> studentOptional = studentDao.getById(idStudenta);
+                if (studentOptional.isPresent()) {
+                    Student student = studentOptional.get();
+                    System.out.println(student);
+                }
+            } else if (tekst.equals("znajdz")) {
+                System.out.println("Podaj ilosc studentów:");
+                int ilosc = scanner.nextInt();
+
+                List<Long> ids = new ArrayList<>();
+                for (int i = 0; i < ilosc; i++) {
+                    ids.add(scanner.nextLong());
+                }
+
+                System.out.println(studentDao.getById(ids)); // wykorzystujemy przeciążoną metodę
+            } else if (tekst.equals("usun")) {
+                System.out.println("Podaj id:");
+                long id = scanner.nextLong();
+
+                System.out.println(studentDao.removeById(id));
             }
         } while (!tekst.equals("exit"));
 
         HibernateUtil.getSessionFactory().close(); // < - instrukcja zamykająca połączenie z bazą.
 
-        // jeśli wpiszę 'dodaj'
-        // aplikacja ma poprosić nas o imie, nazwisko i indeks
-        // następnie aplikacja ma dod   ać studenta o podanym imieniu, nazwisku i indeksie do bazy
-
-        // jeśli wpiszę 'listuj'
-        // aplikacja ma wypisać wszystki studentów linia pod linią
-
-        // jeśli wpiszę 'exit'
-        // aplikacja ma się zakończyć (opuścić pętlę)
 
     }
 }
