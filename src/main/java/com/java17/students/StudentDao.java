@@ -139,10 +139,10 @@ public class StudentDao {
             try (Session session = sesssionFactory.openSession()) {
                 transaction = session.beginTransaction();
 
-                for (Ocena ocena : student.getOceny()) {
-                    // czyścimy relację zanim usuniemy studenta.
-                    session.delete(ocena);
-                }
+//                for (Ocena ocena : student.getOceny()) {
+//                    // czyścimy relację zanim usuniemy studenta.
+//                    session.delete(ocena);
+//                }
 
                 session.delete(student);
                 // logika usuwania
