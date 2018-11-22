@@ -206,6 +206,17 @@ public class StudentDao {
             Teacher teacher = query.getSingleResult();
 
             // UWAGA! pobieram studentów przed zakończeniem sesji (sesja kończy się wraz z blokiem try)
+
+            /**
+             *  Tutaj jest tricky thing - zauważcie że umieściłem poniżej stream
+             *  Celem tej operacji jest iterowanie wszystkich elementów. Dlaczego tak?
+             *
+             *  relacja teacher -> students jest lazy. Jeśli chcę odpytać o studentów muszę to zrobić wewnątrz sesji.
+             *  Jeśli opuszczę metodę, to wszystkie pola studentów nie zostaną mi zwrócone, bo wyskoczy błąd końca sesji.
+             *
+             *  Dlatego taka iteracja powoduje, że każdy student z oddzielna jest przeiterowany, a następnie umieszczony w
+             *  liście wynikowej - czyli taka operacja wymusza załadowanie wszystkich studentów.
+             */
             return teacher.getStudents().stream().collect(Collectors.toList());
         } catch (PersistenceException se) {
             System.err.println("Nie udało się pobrać z bazy!");

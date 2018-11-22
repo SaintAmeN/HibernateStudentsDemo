@@ -88,6 +88,7 @@ public class Main {
 
             studentDao.saveStudentWithGradesIntoDb(student);
         } else if (tekst.equals("listuj")) {
+            // po otrzymaniu wyniku wypisuję go na ekran!
             System.out.println(studentDao.getAllStudentsFromDatabase());
         } else if (tekst.equals("pobierz")) {
             System.out.println("Podaj identyfikator studenta:");
