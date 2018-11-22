@@ -36,5 +36,8 @@ public class Student extends BaseEntity {
     @CreationTimestamp
     private LocalDate date;
 
+    @ManyToMany(mappedBy = "students", fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE, CascadeType.PERSIST})
+    private List<Teacher> teachers;
+
     // @UpdateTimestamp
 }

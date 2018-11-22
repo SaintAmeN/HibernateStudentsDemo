@@ -157,4 +157,38 @@ public class StudentDao {
         }
         return false;
     }
+
+    public boolean addTeacherToStudent(Long teacherId, Long studentId) {
+        // 1 pobierz teachera o podanym id
+        // 2 pobierz studenta o podanym id
+        // 3 do listy nauczycieli w studencie dodać teachera
+        // 4 do listy studentów w teacherze dodać studenta
+        // zapisać obie encje (student i teacher)
+        // UWAGA! PAMIĘTAJ BY ZAPISAĆ STUDENTA I TEACHERA W JEDNEJ SESJI/TRANZAKCJI
+    }
+
+    public List<Student> getAllStudents_fromTeacher(Long teacherId) {
+        SessionFactory sesssionFactory = HibernateUtil.getSessionFactory();
+        try (Session session = sesssionFactory.openSession()) {
+
+            Query<Teacher> query = session.createQuery("from Teacher where id = :zmienna", Teacher.class);
+            query.setParameter("zmienna", teacherId);
+
+            Teacher teacher = query.getSingleResult();
+
+            // UWAGA! pobieram studentów przed zakończeniem sesji (sesja kończy się wraz z blokiem try)
+            return teacher.getStudents();
+        } catch (PersistenceException se) {
+            System.err.println("Nie udało się pobrać z bazy!");
+        } // UWAGA: https://docs.oracle.com/javaee/6/api/javax/persistence/Query.html#getSingleResult()
+
+        /// logika logika logika
+
+        // coś pobiera z bazy nauczyciela o podanym id
+        // po pobraniu nauczyciela używamy gettera i pobieramy pole studentów
+        // (WEWNĄTRZ TRY/CATCH, KIEDY SESJA JEST JESZCZE OTWARTA)
+
+        // zwracamy wynik, a jeśli wystąpi błąd - pustą listę:
+        return new ArrayList<>();
+    }
 }
